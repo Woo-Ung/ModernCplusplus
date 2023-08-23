@@ -1,5 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <functional>
+#include <regex>	// regular expression
+#include <thread>
+#include <mutex>
+#include <future>
 
 //template<class T>
 //void swap(T&& a, T&& b)
@@ -159,10 +164,29 @@
 //			std::unique_ptr
 //			std::shared_ptr
 //			std::weak_ptr
+//				std::weak_ptr<> p = resource;
 //
-//	정규 표현식
+//	정규 표현식	
+//		동시성
+//			Thread
+//				Deadlock
+//			
+//			Asynchronous Function(비동기 함수)	
+//				
 //
+//	Process												Thread
+//	앱이 실행되어 (Runtime) 메모리에 등록된 상태		한 프로세스 내에서 실행되는 여러 흐름
+//	자신의 정보를 context에 저장						공유 메모리 사용
+//	OS가 제어											프로세스가 제어
+//	Context-Switching									Deadlock
+// 
+// 
+//	Deadlock			//교착상태
+// 	critical Section	//임계구역
+// 	Mutual Exclusion	//상호배제
 //
+
+
 
 
 //int main()
@@ -177,36 +201,163 @@
 //	std::cout << *p << std::endl;
 //}
 
-class Warrior
-{
-public:
-	int mHealth;
-	int mAttack;
+//class Warrior
+//{
+//public:
+//	int mHealth;
+//	int mAttack;
+//
+//	Warrior(int h, int a) : mHealth{ h }, mAttack{ a }
+//	{
+//
+//	}
+//};
+//
+//int main()
+//{
+//	Warrior* p = new Warrior(100, 10);
+//
+//	p->mAttack = 10;
+//	(*p).mAttack = 10;
+//
+//	delete p;
+//
+//	std::unique_ptr<Warrior> spWarrior = std::make_unique<Warrior>(100, 20);
+//
+//	//spWarrior.		//unique ptr
+//	//spWarrior->		//spWarrior
+//
+//	std::cout << spWarrior->mAttack << std::endl;
+//
+//	spWarrior.release();	// delete p;
+//	spWarrior.reset();		// delete p; p = nullptr;
+//	  
+//	Warrior* ptr = spWarrior.get(); // 일반 포인터
+//}
 
-	Warrior(int h, int a) : mHealth{ h }, mAttack{ a }
-	{
+//class Image
+//{	
+//};
+//
+//class Demon
+//{
+//public:
+//	int mHealth;
+//	int mAttack;
+//
+//	std::shared_ptr<Image> mspImage;
+//
+//	Demon(int h, int a, std::shared_ptr<Image> spImage) : mHealth{ h }, mAttack{ a }, mspImage{ spImage }
+//	{
+//
+//	}
+//};
+//
+//int main()
+//{
+//	std::shared_ptr<Image> spImage = std::make_shared<Image>();
+//	{
+//		std::unique_ptr<Demon> spDemon = std::make_unique<Demon>(100, 10, spIamage);
+//		{
+//			std::unique_ptr<Demon> spDemon2 = std::make_unique<Demon>(100, 10, spIamage);
+//		}
+//	}
+//}
 
-	}
-};
+//void F(int a, char b)
+//{
+//}
+//
+//using namespace std::placeholders;
+//
+//int main()
+//{
+//	F(1, 'a');
+//	F('a', 1);
+//
+//	auto functor1 = std::bind(F, _1, _2);
+//	functor1(1, 'a');
+//
+//	auto functor2 = std::bind(F, _2, _1);
+//	functor2('a', 1);
+//
+//	auto functor3 = std::bind(F, 10, _1);
+//	functor3('f');
+//}
 
-int main()
-{
-	Warrior* p = new Warrior(100, 10);
+//int main()
+//{
+//	std::cout << "이메일 : ";
+//	std::string email;
+//	std::cin >> email;
+//
+//	// 입력한 이메일이 올바른 메일 주소인가?
+//	//(\w+[\w\.]*)	@	(\w+[\w\.]*)\.([A-Za-z]+)  \w = 단어가 여러개 올 수 있음
+//	//std::regex pattern("(\\w+[\\w\\.]*)@(\\w+[\\w\\.]*)\\.([A-Za-z]+)");
+//	std::regex pattern(R"(\w+[\w\.]*)@(\w+[\w\.]*)\.([A-Za-z]+)");
+//	if (std::regex_match(email, pattern))
+//	{
+//		std::cout << " 올바른 메일 주소 " << std::endl;
+//	}
+//	else
+//	{
+//		std::cout << " 잘못된 메일 주소 " << std::endl;
+//	}
+//}
 
-	p->mAttack = 10;
-	(*p).mAttack = 10;
+//std::mutex gMutex;
+//
+//void PlayMovie()
+//{
+//	for (int i = 0; i < 1000; i++)
+//	{
+//		gMutex.lock();
+//		std::cout << "PlayMovie : " << i << std::endl;
+//		gMutex.unlock();
+//	}
+//}
+//void Download()
+//{
+//	for (int repeat = 0; repeat < 10; repeat++)
+//	{
+//		for (char i = 33; i < 125;i++)
+//		{
+//			gMutex.lock();
+//			std::cout << "Download : " << i << std::endl;
+//			gMutex.unlock();
+//		}
+//	}
+//}
+//
+//int main()
+//{
+//	std::thread job1(PlayMovie);
+//	std::thread job2(Download);
+//
+//	job1.join();
+//	job2.join();
+//
+//	std::cout << "모든 작업이 끝났습니다." << std::endl;
+//}
+//
+//int main()
+//{
+//	std::future<void> job1 = std::async(PlayMovie);
+//	std::future<void> job2 = std::async(Download);
+//
+//	std::cout << "모든 작업이 끝났습니다." << std::endl;
+//}
 
-	delete p;
 
-	std::unique_ptr<Warrior> spWarrior = std::make_unique<Warrior>(100, 20);
+// C++ 20 사천왕(big four)
+// concept. range, coroutine, module
 
-	//spWarrior.		//unique ptr
-	//spWarrior->		//spWarrior
+//concept = template의 요구사항을 간단히 알려줌
+//range = 
 
-	std::cout << spWarrior->mAttack << std::endl;
-
-	spWarrior.release();	// delete p;
-	spWarrior.reset();		// delete p; p = nullptr;
-	  
-	Warrior* ptr = spWarrior.get(); // 일반 포인터
-}
+//#include <header>
+//- 중복
+//- 순서에 영향
+//- 하나만 사용할 수 없음
+//
+//#import iostream.cout
