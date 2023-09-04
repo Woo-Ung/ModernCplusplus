@@ -4,10 +4,14 @@
 #include <string>
 #include "file_stream.h"
 #include "xml_paser.h"
+#include "tinyxml_test.h"
 
 int main()
 {		
-	XMLTest();
+
+	TinyXMLTest();
+	/*XMLTest();*/
+
 }
 
 //DOM (Document Object Model)
